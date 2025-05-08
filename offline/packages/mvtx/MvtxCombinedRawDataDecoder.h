@@ -16,7 +16,7 @@
 #include <string>
 #include <vector>
 
-#include "MvtxPixelMask.h"
+// #include "MvtxPixelMask.h"
 
 class MvtxEventInfo;
 class MvtxRawEvtHeader;
@@ -25,6 +25,7 @@ class MvtxRawHit;
 class PHCompositeNode;
 class TrkrHitSetContainer;
 class TrkrHitSetContMvtxHelper;
+class MvtxNoiseMap;
 
 /// mvtx raw data decoder
 class MvtxCombinedRawDataDecoder : public SubsysReco
@@ -79,8 +80,10 @@ class MvtxCombinedRawDataDecoder : public SubsysReco
   float m_strobeWidth = 89.;  //! microseconds
 
   // mask hot pixels
+  static std::shared_ptr<MvtxNoiseMap> m_MvtxNoiseMap;
+  bool m_fillMvtxNoiseMap{false};
   bool m_doOfflineMasking{false};
-  MvtxPixelMask* m_hot_pixel_mask{nullptr};
+  // MvtxPixelMask* m_hot_pixel_mask{nullptr};
 
   bool m_mvtx_is_triggered{false};
 };

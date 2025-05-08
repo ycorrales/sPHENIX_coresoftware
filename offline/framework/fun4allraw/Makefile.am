@@ -26,6 +26,7 @@ pkginclude_HEADERS = \
   MicromegasBcoMatchingInformation.h\
   MicromegasBcoMatchingInformation_v1.h\
   MicromegasBcoMatchingInformation_v2.h\
+  mvtx_pool.h \
   MvtxRawDefs.h \
   SingleCemcTriggerInput.h \
   SingleGl1PoolInput.h \

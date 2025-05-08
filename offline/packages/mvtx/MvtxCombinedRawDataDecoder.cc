@@ -5,6 +5,7 @@
  */
 
 #include "MvtxCombinedRawDataDecoder.h"
+#include "MvtxNoiseMap.h"
 
 #include <fun4allraw/MvtxRawDefs.h>
 #include <trackbase/MvtxDefs.h>
@@ -37,11 +38,14 @@
 
 #include <cassert>
 #include <iterator>
+#include <memory>
+
+std::shared_ptr<MvtxNoiseMap> MvtxCombinedRawDataDecoder::m_MvtxNoiseMap = nullptr;
 
 namespace
 {
   std::string MvtxHitSetHelperName("TRKR_MVTXHITSETHELPER");
-}
+}  // namespace
 
 //_________________________________________________________
 MvtxCombinedRawDataDecoder::MvtxCombinedRawDataDecoder(const std::string &name)
@@ -225,13 +229,16 @@ int MvtxCombinedRawDataDecoder::InitRun(PHCompositeNode *topNode)
   //! save MVTX strobe width
   rc->set_FloatFlag("MvtxStrobeWidth", m_strobeWidth);
 
-  // Load the hot pixel map from the CDB
-  if (m_doOfflineMasking)
+  if (!m_MvtxNoiseMap && (m_fillMvtxNoiseMap || m_doOfflineMasking))
   {
-    m_hot_pixel_mask = new MvtxPixelMask();
-    m_hot_pixel_mask->load_from_CDB();
+    m_MvtxNoiseMap = std::make_shared<MvtxNoiseMap>(48 * 9);
+    // Load the hot pixel map from the CDB
+    if (m_doOfflineMasking)
+    {
+      std::string dbMvtxNoiseMapName = CDBInterface::instance()->getUrl("MvtxNoiseMap");
+      m_MvtxNoiseMap->read(dbMvtxNoiseMapName);
+    }
   }
-
   return Fun4AllReturnCodes::EVENT_OK;
 }
 
@@ -349,11 +356,11 @@ int MvtxCombinedRawDataDecoder::process_event(PHCompositeNode *topNode)
 
     if (m_doOfflineMasking)
     {
-      if (!m_hot_pixel_mask->is_masked(mvtx_rawhit))
-      {  // Check if the pixel is masked
-        hit = new TrkrHitv2;
-        hitset_it->second->addHitSpecificKey(hitkey, hit);
-      }
+      // if (!m_hot_pixel_mask->is_masked(mvtx_rawhit))
+      // {  // Check if the pixel is masked
+      //   hit = new TrkrHitv2;
+      //   hitset_it->second->addHitSpecificKey(hitkey, hit);
+      // }
     }
     else
     {
@@ -370,7 +377,6 @@ int MvtxCombinedRawDataDecoder::End(PHCompositeNode * /*topNode*/)
 {
   return Fun4AllReturnCodes::EVENT_OK;
 }
-
 
 // void MvtxCombinedRawDataDecoder::removeDuplicates(
 //     std::vector<std::pair<uint64_t, uint32_t> > &v)

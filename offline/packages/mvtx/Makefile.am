@@ -25,8 +25,7 @@ pkginclude_HEADERS = \
   MvtxClusterizer.h \
   MvtxHitPruner.h \
   MvtxNoiseMap.h \
-  MvtxPixelDefs.h \
-  MvtxPixelMask.h \
+  MvtxSaPrdfUnpacker.h \
   SegmentationAlpide.h
 
 ROOTDICTS = \
@@ -34,9 +33,7 @@ ROOTDICTS = \
   MvtxNoiseMap_Dict.cc
 
 pcmdir = $(libdir)
-nobase_dist_pcm_DATA = \
-  CylinderGeom_Mvtx_Dict_rdict.pcm \
-  MvtxNoiseMap_Dict_rdict.pcm
+nobase_dist_pcm_DATA = $(ROOTDICTS:.cc=_rdict.pcm)
 
 # sources for mvtx library
 libmvtx_la_SOURCES = \
@@ -44,8 +41,8 @@ libmvtx_la_SOURCES = \
   MvtxCombinedRawDataDecoder.cc \
   MvtxClusterizer.cc \
   MvtxHitPruner.cc \
-  MvtxPixelDefs.cc \
-  MvtxPixelMask.cc
+  MvtxNoiseMap.cc \
+  MvtxSaPrdfUnpacker.cc
 
 libmvtx_la_LIBADD = \
   libmvtx_io.la \
@@ -66,7 +63,6 @@ libmvtx_la_LIBADD = \
 libmvtx_io_la_SOURCES = \
   $(ROOTDICTS) \
   CylinderGeom_Mvtx.cc \
-  MvtxNoiseMap.cc \
   SegmentationAlpide.cc
 
 libmvtx_io_la_LIBADD = \
