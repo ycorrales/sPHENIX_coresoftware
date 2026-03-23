@@ -377,7 +377,6 @@ bool DecayFinder::findDecay(PHCompositeNode* topNode)
     {
       PHG4Particle* g4particle = iter->second;
       int this_pid = m_getChargeConjugate ? abs(g4particle->get_pid()) : g4particle->get_pid();
-      // if (this_pid == m_mother_ID)
       if (this_pid == mother_id_to_match)
       {
         if (Verbosity() >= VERBOSITY_MAX)
