@@ -155,7 +155,7 @@ int MinimumBiasClassifier::FillMinimumBiasInfo()
   {
     std::cout << "Getting ZDC" << std::endl;
   }
-  if (!m_issim && !m_useZDC)
+  if (!m_issim && m_useZDC)
   {
     if (!m_zdcinfo)
     {
