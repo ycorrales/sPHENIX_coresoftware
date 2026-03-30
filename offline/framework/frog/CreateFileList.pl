@@ -1369,6 +1369,10 @@ while($#ARGV >= 0)
 }
 print "This Can Take a While (10 minutes depending on the amount of events and the number of file types you want)\n";
 my $conds = sprintf("dsttype = ? and filename like \'\%%%s\%\'",$filenamestring_with_runnumber);
+if (! defined $double)
+{
+    $conds = sprintf("%s and filename not like '\%%pythia8_\%_pythia8\%'",$conds);
+}
 
 if (exists $notlike{$filenamestring})
 {
