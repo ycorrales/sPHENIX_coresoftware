@@ -222,6 +222,8 @@ class QVecCalib : public SubsysReco
     TProfile* NS_yy_corr_avg{nullptr};
     TProfile* NS_xy_corr_avg{nullptr};
 
+    TProfile* EP_res{nullptr};
+
     TH2* Psi_S_corr2{nullptr};
     TH2* Psi_N_corr2{nullptr};
     TH2* Psi_NS_corr2{nullptr};

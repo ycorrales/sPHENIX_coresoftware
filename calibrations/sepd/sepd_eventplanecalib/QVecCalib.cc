@@ -361,6 +361,11 @@ void QVecCalib::init_hists()
     m_hists2D[name_N] = new TH2F(name_N.c_str(), title_N.c_str(), m_cent_bins, m_cent_low, m_cent_high, bins_psi, psi_low, psi_high);
     m_hists2D[name_NS] = new TH2F(name_NS.c_str(), title_NS.c_str(), m_cent_bins, m_cent_low, m_cent_high, bins_psi, psi_low, psi_high);
 
+    std::string name_EP_res = std::format("hEP_res_{}", n);
+    std::string title_EP_res = std::format("; Centrality [%]; #LTRe(Q^{{S}}_{{{0}}} Q^{{N*}}_{{{0}}}) / (|Q^{{S}}_{{{0}}}||Q^{{N}}_{{{0}}}|)#GT", n);
+
+    m_profiles[name_EP_res] = new TProfile(name_EP_res.c_str(), title_EP_res.c_str(), m_cent_bins, m_cent_low, m_cent_high);
+
     // South, North
     for (auto det : m_subdetectors)
     {
@@ -723,6 +728,8 @@ void QVecCalib::prepare_flattening_hists()
     std::string psi_N_name = std::format("h2_sEPD_Psi_N_{}_corr2", n);
     std::string psi_NS_name = std::format("h2_sEPD_Psi_NS_{}_corr2", n);
 
+    std::string EP_res_name = std::format("hEP_res_{}", n);
+
     FlatteningHists h;
 
     h.S_x_corr2_avg = m_profiles.at(S_x_corr2_avg_name);
@@ -746,6 +753,8 @@ void QVecCalib::prepare_flattening_hists()
     h.Psi_N_corr2 = m_hists2D.at(psi_N_name);
     h.Psi_NS_corr2 = m_hists2D.at(psi_NS_name);
 
+    h.EP_res = m_profiles.at(EP_res_name);
+
     se->registerHisto(h.S_x_corr2_avg);
     se->registerHisto(h.S_y_corr2_avg);
     se->registerHisto(h.N_x_corr2_avg);
@@ -766,6 +775,8 @@ void QVecCalib::prepare_flattening_hists()
     se->registerHisto(h.Psi_S_corr2);
     se->registerHisto(h.Psi_N_corr2);
     se->registerHisto(h.Psi_NS_corr2);
+
+    se->registerHisto(h.EP_res);
 
     m_flattening_hists.push_back(h);
   }
@@ -908,6 +919,11 @@ void QVecCalib::process_flattening(double cent, size_t h_idx, const QVecShared::
   double psi_N = std::atan2(q_N_corr2.y, q_N_corr2.x);
   double psi_NS = std::atan2(q_NS_corr2.y, q_NS_corr2.x);
 
+  double SP_QS_QN = q_S_corr2.x * q_N_corr2.x + q_S_corr2.y * q_N_corr2.y;
+  double norm_S = std::sqrt(q_S_corr2.x * q_S_corr2.x + q_S_corr2.y * q_S_corr2.y);
+  double norm_N = std::sqrt(q_N_corr2.x * q_N_corr2.x + q_N_corr2.y * q_N_corr2.y);
+  double EP_res = (norm_S && norm_N) ? SP_QS_QN / (norm_S * norm_N) : 0;
+
   h.S_x_corr2_avg->Fill(cent, q_S_corr2.x);
   h.S_y_corr2_avg->Fill(cent, q_S_corr2.y);
   h.N_x_corr2_avg->Fill(cent, q_N_corr2.x);
@@ -927,6 +943,8 @@ void QVecCalib::process_flattening(double cent, size_t h_idx, const QVecShared::
   h.Psi_S_corr2->Fill(cent, psi_S);
   h.Psi_N_corr2->Fill(cent, psi_N);
   h.Psi_NS_corr2->Fill(cent, psi_NS);
+
+  h.EP_res->Fill(cent, EP_res);
 }
 
 bool QVecCalib::process_sEPD()
