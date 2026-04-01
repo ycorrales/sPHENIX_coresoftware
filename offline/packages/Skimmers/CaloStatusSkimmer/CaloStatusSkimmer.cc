@@ -36,16 +36,16 @@ int CaloStatusSkimmer::Init([[maybe_unused]] PHCompositeNode *topNode)
     auto* hm = QAHistManagerDef::getHistoManager();
     assert(hm);
 
-    h_EMC_nTowers_notinstr = new TH1("h_EMC_nTowers_notinstr", "Number of not-instrumented(empty/missing pckt) towers in EMCal; nNotInstrTowers; Counts", 193, -0.5, 192.5);
+    h_EMC_nTowers_notinstr = new TH1F("h_EMC_nTowers_notinstr", "Number of not-instrumented(empty/missing pckt) towers in EMCal; nNotInstrTowers; Counts", 24577, -0.5, 24576.5);
     h_EMC_nTowers_notinstr->SetDirectory(nullptr);
-    h_HCal_nTowers_notinstr = new TH1("h_HCal_nTowers_notinstr", "Number of not-instrumented(empty/missing pckt) towers in HCal; nNotInstrTowers; Counts", 193, -0.5, 192.5);
+    h_HCal_nTowers_notinstr = new TH1F("h_HCal_nTowers_notinstr", "Number of not-instrumented(empty/missing pckt) towers in HCal; nNotInstrTowers; Counts", 1537, -0.5, 1536.5);
     h_HCal_nTowers_notinstr->SetDirectory(nullptr);
-    h_sEPD_nTowers_notinstr = new TH1("h_sEPD_nTowers_notinstr", "Number of not-instrumented(empty/missing pckt) towers in sEPD; nNotInstrTowers; Counts", 17, -0.5, 16.5);
+    h_sEPD_nTowers_notinstr = new TH1F("h_sEPD_nTowers_notinstr", "Number of not-instrumented(empty/missing pckt) towers in sEPD; nNotInstrTowers; Counts", 745, -0.5, 744.5);
     h_sEPD_nTowers_notinstr->SetDirectory(nullptr);
-    h_ZDC_nTowers_notinstr = new TH1("h_ZDC_nTowers_notinstr", "Number of not-instrumented(empty/missing pckt) towers in ZDC; nNotInstrTowers; Counts", 5, -0.5, 4.5);
+    h_ZDC_nTowers_notinstr = new TH1F("h_ZDC_nTowers_notinstr", "Number of not-instrumented(empty/missing pckt) towers in ZDC; nNotInstrTowers; Counts", 53, -0.5, 52.5);
     h_ZDC_nTowers_notinstr->SetDirectory(nullptr);
 
-    h_calo_nEvents = new TH1("h_calo_nEvents", "Number of events", 7, 0.5, 7.5);
+    h_calo_nEvents = new TH1F("h_calo_nEvents", "Number of events", 7, 0.5, 7.5);
     h_calo_nEvents->GetXaxis()->SetBinLabel(1, "Total events processed");
     h_calo_nEvents->GetXaxis()->SetBinLabel(2, "Total events skimmed");
     h_calo_nEvents->GetXaxis()->SetBinLabel(3, "EMCal above not-instr threshold");
