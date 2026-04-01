@@ -16,7 +16,7 @@
 #include <cstdint>
 #include <iostream>
 
-#include <TH1F.h>
+#include <TH1.h>
 
 //____________________________________________________________________________..
 CaloStatusSkimmer::CaloStatusSkimmer(const std::string &name)
@@ -36,44 +36,31 @@ int CaloStatusSkimmer::Init([[maybe_unused]] PHCompositeNode *topNode)
     auto* hm = QAHistManagerDef::getHistoManager();
     assert(hm);
 
-    h_EMC_nTowers_notinstr = new TH1F("h_EMC_nTowers_notinstr", "Number of not-instrumented(empty/missing pckt) towers in EMCal; nNotInstrTowers; Counts", 193, -0.5, 192.5);
+    h_EMC_nTowers_notinstr = new TH1("h_EMC_nTowers_notinstr", "Number of not-instrumented(empty/missing pckt) towers in EMCal; nNotInstrTowers; Counts", 193, -0.5, 192.5);
     h_EMC_nTowers_notinstr->SetDirectory(nullptr);
-    h_HCal_nTowers_notinstr = new TH1F("h_HCal_nTowers_notinstr", "Number of not-instrumented(empty/missing pckt) towers in HCal; nNotInstrTowers; Counts", 193, -0.5, 192.5);
+    h_HCal_nTowers_notinstr = new TH1("h_HCal_nTowers_notinstr", "Number of not-instrumented(empty/missing pckt) towers in HCal; nNotInstrTowers; Counts", 193, -0.5, 192.5);
     h_HCal_nTowers_notinstr->SetDirectory(nullptr);
-    h_sEPD_nTowers_notinstr = new TH1F("h_sEPD_nTowers_notinstr", "Number of not-instrumented(empty/missing pckt) towers in sEPD; nNotInstrTowers; Counts", 17, -0.5, 16.5);
+    h_sEPD_nTowers_notinstr = new TH1("h_sEPD_nTowers_notinstr", "Number of not-instrumented(empty/missing pckt) towers in sEPD; nNotInstrTowers; Counts", 17, -0.5, 16.5);
     h_sEPD_nTowers_notinstr->SetDirectory(nullptr);
-    h_ZDC_nTowers_notinstr = new TH1F("h_ZDC_nTowers_notinstr", "Number of not-instrumented(empty/missing pckt) towers in ZDC; nNotInstrTowers; Counts", 5, -0.5, 4.5);
+    h_ZDC_nTowers_notinstr = new TH1("h_ZDC_nTowers_notinstr", "Number of not-instrumented(empty/missing pckt) towers in ZDC; nNotInstrTowers; Counts", 5, -0.5, 4.5);
     h_ZDC_nTowers_notinstr->SetDirectory(nullptr);
 
-    h_EMC_nEvents = new TH1F("h_EMC_nEvents", "Number of events", 2, 0.5, 2.5);
-    h_EMC_nEvents->GetXaxis()->SetBinLabel(1, "Total events processed");
-    h_EMC_nEvents->GetXaxis()->SetBinLabel(2, "Total events skimmed");
-    h_EMC_nEvents->SetDirectory(nullptr); 
+    h_calo_nEvents = new TH1("h_calo_nEvents", "Number of events", 7, 0.5, 7.5);
+    h_calo_nEvents->GetXaxis()->SetBinLabel(1, "Total events processed");
+    h_calo_nEvents->GetXaxis()->SetBinLabel(2, "Total events skimmed");
+    h_calo_nEvents->GetXaxis()->SetBinLabel(3, "EMCal above not-instr threshold");
+    h_calo_nEvents->GetXaxis()->SetBinLabel(4, "HCal above not-instr threshold");
+    h_calo_nEvents->GetXaxis()->SetBinLabel(5, "sEPD above not-instr threshold");
+    h_calo_nEvents->GetXaxis()->SetBinLabel(6, "ZDC above not-instr threshold");
+    h_calo_nEvents->GetXaxis()->SetBinLabel(7, "No TowerInfo nodes found");
+    h_calo_nEvents->SetDirectory(nullptr);
 
-    h_HCal_nEvents = new TH1F("h_HCal_nEvents", "Number of events", 2, 0.5, 2.5);
-    h_HCal_nEvents->GetXaxis()->SetBinLabel(1, "Total events processed");
-    h_HCal_nEvents->GetXaxis()->SetBinLabel(2, "Total events skimmed");
-    h_HCal_nEvents->SetDirectory(nullptr);
-
-    h_sEPD_nEvents = new TH1F("h_sEPD_nEvents", "Number of events", 2, 0.5, 2.5);
-    h_sEPD_nEvents->GetXaxis()->SetBinLabel(1, "Total events processed");
-    h_sEPD_nEvents->GetXaxis()->SetBinLabel(2, "Total events skimmed");
-    h_sEPD_nEvents->SetDirectory(nullptr);
-
-    h_ZDC_nEvents = new TH1F("h_ZDC_nEvents", "Number of events", 2, 0.5, 2.5);
-    h_ZDC_nEvents->GetXaxis()->SetBinLabel(1, "Total events processed");
-    h_ZDC_nEvents->GetXaxis()->SetBinLabel(2, "Total events skimmed");
-    h_ZDC_nEvents->SetDirectory(nullptr);
+    hm->registerHisto(h_calo_nEvents);
 
     hm->registerHisto(h_EMC_nTowers_notinstr);
     hm->registerHisto(h_HCal_nTowers_notinstr);
     hm->registerHisto(h_sEPD_nTowers_notinstr);
     hm->registerHisto(h_ZDC_nTowers_notinstr);
-
-    hm->registerHisto(h_EMC_nEvents);
-    hm->registerHisto(h_HCal_nEvents);
-    hm->registerHisto(h_sEPD_nEvents);
-    hm->registerHisto(h_ZDC_nEvents);
   }
 
   return Fun4AllReturnCodes::EVENT_OK;
@@ -83,6 +70,12 @@ int CaloStatusSkimmer::Init([[maybe_unused]] PHCompositeNode *topNode)
 int CaloStatusSkimmer::process_event(PHCompositeNode *topNode)
 {
   n_eventcounter++;
+  uint16_t notinstr_EMC = 0;
+  uint16_t notinstr_HCalin = 0;
+  uint16_t notinstr_HCalout = 0;
+  uint16_t notinstr_sEPD = 0;
+  uint16_t notinstr_ZDC = 0;
+
   if (m_EMC_skim_threshold > 0)
   {
     TowerInfoContainer *towers =
@@ -97,29 +90,27 @@ int CaloStatusSkimmer::process_event(PHCompositeNode *topNode)
       return Fun4AllReturnCodes::ABORTEVENT;
     }
     const uint32_t ntowers = towers->size();
-    uint16_t notinstr_count = 0;
     for (uint32_t ch = 0; ch < ntowers; ++ch)
     {
       TowerInfo *tower = towers->get_tower_at_channel(ch);
       if (tower->get_isNotInstr())
       {
-        ++notinstr_count;
+        ++notinstr_EMC;
       }
     }
     if (Verbosity() > 9)
     {
-      std::cout << "CaloStatusSkimmer::process_event: event " << n_eventcounter << ", ntowers in EMCal = " << ntowers << ", not-instrumented(empty/missing pckt) towers in EMCal = " << notinstr_count << std::endl;
+      std::cout << "CaloStatusSkimmer::process_event: event " << n_eventcounter << ", ntowers in EMCal = " << ntowers << ", not-instrumented(empty/missing pckt) towers in EMCal = " << notinstr_EMC << std::endl;
     }
 
     if (b_produce_QA_histograms)
     {
-      h_EMC_nTowers_notinstr->Fill(notinstr_count);
+      h_EMC_nTowers_notinstr->Fill(notinstr_EMC);
     }
 
-    if (notinstr_count >= m_EMC_skim_threshold)
+    if (notinstr_EMC > m_EMC_skim_threshold)
     {
-      n_skimcounter++;
-      return Fun4AllReturnCodes::ABORTEVENT;
+      EMC_skim_count++;
     }
   }
 
@@ -138,43 +129,40 @@ int CaloStatusSkimmer::process_event(PHCompositeNode *topNode)
     }
 
     const uint32_t ntowers_hcalin = hcalin_towers->size();
-    uint16_t notinstr_count_hcalin = 0;
     for (uint32_t ch = 0; ch < ntowers_hcalin; ++ch)
     {
       TowerInfo *tower_in = hcalin_towers->get_tower_at_channel(ch);
       if (tower_in->get_isNotInstr())
       {
-        ++notinstr_count_hcalin;
+        ++notinstr_HCalin;
       }
     }
 
     const uint32_t ntowers_hcalout = hcalout_towers->size();
-    uint16_t notinstr_count_hcalout = 0;
     for (uint32_t ch = 0; ch < ntowers_hcalout; ++ch)
     {
       TowerInfo *tower_out = hcalout_towers->get_tower_at_channel(ch);
       if (tower_out->get_isNotInstr())
       {
-        ++notinstr_count_hcalout;
+        ++notinstr_HCalout;
       }
     }
 
     if (Verbosity() > 9)
     {
-      std::cout << "CaloStatusSkimmer::process_event: event " << n_eventcounter << ", ntowers in HCalIn = " << ntowers_hcalin << ", not-instrumented(empty/missing pckt) towers in HCalIn = " << notinstr_count_hcalin << ", ntowers in HCalOut = " << ntowers_hcalout << ", not-instrumented(empty/missing pckt) towers in HCalOut = " << notinstr_count_hcalout << std::endl;
+      std::cout << "CaloStatusSkimmer::process_event: event " << n_eventcounter << ", ntowers in HCalIn = " << ntowers_hcalin << ", not-instrumented(empty/missing pckt) towers in HCalIn = " << notinstr_HCalin << ", ntowers in HCalOut = " << ntowers_hcalout << ", not-instrumented(empty/missing pckt) towers in HCalOut = " << notinstr_HCalout << std::endl;
     }
 
     if (b_produce_QA_histograms)
     {
-      h_HCal_nTowers_notinstr->Fill(notinstr_count_hcalin);
-      h_HCal_nTowers_notinstr->Fill(notinstr_count_hcalout);
+      h_HCal_nTowers_notinstr->Fill(notinstr_HCalin);
+      h_HCal_nTowers_notinstr->Fill(notinstr_HCalout);
     }
 
-    if (notinstr_count_hcalin >= m_HCal_skim_threshold ||
-        notinstr_count_hcalout >= m_HCal_skim_threshold)
+    if (notinstr_HCalin > m_HCal_skim_threshold ||
+        notinstr_HCalout > m_HCal_skim_threshold)
     {
-      n_skimcounter++;
-      return Fun4AllReturnCodes::ABORTEVENT;
+      HCal_skim_count++;
     }
   }
 
@@ -192,30 +180,28 @@ int CaloStatusSkimmer::process_event(PHCompositeNode *topNode)
       return Fun4AllReturnCodes::ABORTEVENT;
     }
     const uint32_t ntowers = sepd_towers->size();
-    uint16_t notinstr_count = 0;
     for (uint32_t ch = 0; ch < ntowers; ++ch)
     {
       TowerInfo *tower = sepd_towers->get_tower_at_channel(ch);
       if (tower->get_isNotInstr())
       {
-        ++notinstr_count;
+        ++notinstr_sEPD;
       }
     }
 
     if (Verbosity() > 9)
     {
-      std::cout << "CaloStatusSkimmer::process_event: event " << n_eventcounter << ", ntowers in sEPD = " << ntowers << ", not-instrumented(empty/missing pckt) towers in sEPD = " << notinstr_count << std::endl;
+      std::cout << "CaloStatusSkimmer::process_event: event " << n_eventcounter << ", ntowers in sEPD = " << ntowers << ", not-instrumented(empty/missing pckt) towers in sEPD = " << notinstr_sEPD << std::endl;
     }
 
     if(b_produce_QA_histograms)
     {
-      h_sEPD_nTowers_notinstr->Fill(notinstr_count);
+      h_sEPD_nTowers_notinstr->Fill(notinstr_sEPD);
     }
 
-    if (notinstr_count >= m_sEPD_skim_threshold)
+    if (notinstr_sEPD > m_sEPD_skim_threshold)
     {
-      n_skimcounter++;
-      return Fun4AllReturnCodes::ABORTEVENT;
+      sEPD_skim_count++;
     }
   }
 
@@ -233,31 +219,36 @@ int CaloStatusSkimmer::process_event(PHCompositeNode *topNode)
       return Fun4AllReturnCodes::ABORTEVENT;
     }
     const uint32_t ntowers = zdc_towers->size();
-    uint16_t notinstr_count = 0;
     for (uint32_t ch = 0; ch < ntowers; ++ch)
     {
       TowerInfo *tower = zdc_towers->get_tower_at_channel(ch);
       if (tower->get_isNotInstr())
       {
-        ++notinstr_count;
+        ++notinstr_ZDC;
       }
     }
 
     if (Verbosity() > 9)
     {
-      std::cout << "CaloStatusSkimmer::process_event: event " << n_eventcounter << ", ntowers in ZDC = " << ntowers << ", not-instrumented(empty/missing pckt) towers in ZDC = " << notinstr_count << std::endl;
+      std::cout << "CaloStatusSkimmer::process_event: event " << n_eventcounter << ", ntowers in ZDC = " << ntowers << ", not-instrumented(empty/missing pckt) towers in ZDC = " << notinstr_ZDC << std::endl;
     }
 
     if(b_produce_QA_histograms)
     {
-      h_ZDC_nTowers_notinstr->Fill(notinstr_count);
+      h_ZDC_nTowers_notinstr->Fill(notinstr_ZDC);
     }
 
-    if (notinstr_count >= m_ZDC_skim_threshold)
+    if (notinstr_ZDC > m_ZDC_skim_threshold)
     {
-      n_skimcounter++;
-      return Fun4AllReturnCodes::ABORTEVENT;
+      ZDC_skim_count++;
     }
+  }
+
+  // If any of the enabled skimming conditions are met, then increment the skim counter and return ABORTEVENT to skip the event
+  if ((m_EMC_skim_threshold > 0 && notinstr_EMC > m_EMC_skim_threshold) || (m_HCal_skim_threshold > 0 && (notinstr_HCalin > m_HCal_skim_threshold || notinstr_HCalout > m_HCal_skim_threshold)) || (m_sEPD_skim_threshold > 0 && notinstr_sEPD > m_sEPD_skim_threshold) || (m_ZDC_skim_threshold > 0 && notinstr_ZDC > m_ZDC_skim_threshold))
+  {
+    n_skimcounter++;
+    return Fun4AllReturnCodes::ABORTEVENT;
   }
 
   return Fun4AllReturnCodes::EVENT_OK;
@@ -273,18 +264,13 @@ int CaloStatusSkimmer::End([[maybe_unused]] PHCompositeNode *topNode)
 
   if (b_produce_QA_histograms)
   {
-    h_EMC_nEvents->SetBinContent(1, n_eventcounter);
-    h_EMC_nEvents->SetBinContent(2, n_skimcounter);
-
-    h_HCal_nEvents->SetBinContent(1, n_eventcounter);
-    h_HCal_nEvents->SetBinContent(2, n_skimcounter);
-
-    h_sEPD_nEvents->SetBinContent(1, n_eventcounter);
-    h_sEPD_nEvents->SetBinContent(2, n_skimcounter);
-
-    h_ZDC_nEvents->SetBinContent(1, n_eventcounter);
-    h_ZDC_nEvents->SetBinContent(2, n_skimcounter);
-
+    h_calo_nEvents->SetBinContent(1, n_eventcounter);
+    h_calo_nEvents->SetBinContent(2, n_skimcounter);
+    h_calo_nEvents->SetBinContent(3, EMC_skim_count);
+    h_calo_nEvents->SetBinContent(4, HCal_skim_count);
+    h_calo_nEvents->SetBinContent(5, sEPD_skim_count);
+    h_calo_nEvents->SetBinContent(6, ZDC_skim_count);
+    h_calo_nEvents->SetBinContent(7, n_notowernodecounter);
   }
 
   return Fun4AllReturnCodes::EVENT_OK;

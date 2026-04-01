@@ -10,10 +10,10 @@
 #include <string>
 #include <utility>
 
-#include <TH1F.h>
+#include <TH1.h>
 
 class PHCompositeNode;
-class TH1F;
+class TH1;
 
 class CaloStatusSkimmer : public SubsysReco {
 public:
@@ -65,27 +65,31 @@ private:
 
   // If the threshold is set to 0, then the skimming for that subsystem is disabled. If threshold is > 0, then the event is skimmed if nchannels >= threshold not-instrumented (empty/missing packet) channels in that subsystem.
   uint16_t m_EMC_skim_threshold{192}; 
-  // skim if nchannels >= this many not-instrumented (empty/missing packet) channels in EMCal
+  // skim if nchannels > this many not-instrumented (empty/missing packet) channels in EMCal
 
   uint16_t m_HCal_skim_threshold{192}; 
-  // skim if nchannels >= this many not-instrumented (empty/missing packet) channels in HCal
+  // skim if nchannels > this many not-instrumented (empty/missing packet) channels in HCal
 
   uint16_t m_sEPD_skim_threshold{1}; 
-  // skim if nchannels >= this many not-instrumented (empty/missing packet) channels in sEPD
+  // skim if nchannels > this many not-instrumented (empty/missing packet) channels in sEPD
 
-  uint16_t m_ZDC_skim_threshold{1}; 
-  // skim if nchannels >= this many not-instrumented (empty/missing packet) channels in ZDC
+  uint16_t m_ZDC_skim_threshold{0}; 
+  // skim if nchannels > this many not-instrumented (empty/missing packet) channels in ZDC
 
-  //histograms
-  TH1F* h_EMC_nTowers_notinstr = nullptr;
-  TH1F* h_HCal_nTowers_notinstr = nullptr;
-  TH1F* h_sEPD_nTowers_notinstr = nullptr;
-  TH1F* h_ZDC_nTowers_notinstr = nullptr;
+  // Counters for number of events skimmed per subsystem
+  uint32_t EMC_skim_count = 0;
+  uint32_t HCal_skim_count = 0;
+  uint32_t sEPD_skim_count = 0; 
+  uint32_t ZDC_skim_count = 0;
 
-  TH1F* h_EMC_nEvents = nullptr;
-  TH1F* h_HCal_nEvents = nullptr;
-  TH1F* h_sEPD_nEvents = nullptr;
-  TH1F* h_ZDC_nEvents = nullptr;
+  //Per-calo tower counter histograms
+  TH1* h_EMC_nTowers_notinstr = nullptr;
+  TH1* h_HCal_nTowers_notinstr = nullptr;
+  TH1* h_sEPD_nTowers_notinstr = nullptr;
+  TH1* h_ZDC_nTowers_notinstr = nullptr;
+
+  //Event counter histograms
+  TH1* h_calo_nEvents = nullptr;
 
 };
 
