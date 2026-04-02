@@ -108,7 +108,7 @@ int CaloStatusSkimmer::process_event(PHCompositeNode *topNode)
       h_EMC_nTowers_notinstr->Fill(notinstr_EMC);
     }
 
-    if (notinstr_EMC > m_EMC_skim_threshold)
+    if (notinstr_EMC >= m_EMC_skim_threshold)
     {
       EMC_skim_count++;
     }
@@ -159,8 +159,8 @@ int CaloStatusSkimmer::process_event(PHCompositeNode *topNode)
       h_HCal_nTowers_notinstr->Fill(notinstr_HCalout);
     }
 
-    if (notinstr_HCalin > m_HCal_skim_threshold ||
-        notinstr_HCalout > m_HCal_skim_threshold)
+    if (notinstr_HCalin >= m_HCal_skim_threshold ||
+        notinstr_HCalout >= m_HCal_skim_threshold)
     {
       HCal_skim_count++;
     }
@@ -199,7 +199,7 @@ int CaloStatusSkimmer::process_event(PHCompositeNode *topNode)
       h_sEPD_nTowers_notinstr->Fill(notinstr_sEPD);
     }
 
-    if (notinstr_sEPD > m_sEPD_skim_threshold)
+    if (notinstr_sEPD >= m_sEPD_skim_threshold)
     {
       sEPD_skim_count++;
     }
@@ -238,14 +238,14 @@ int CaloStatusSkimmer::process_event(PHCompositeNode *topNode)
       h_ZDC_nTowers_notinstr->Fill(notinstr_ZDC);
     }
 
-    if (notinstr_ZDC > m_ZDC_skim_threshold)
+    if (notinstr_ZDC >= m_ZDC_skim_threshold)
     {
       ZDC_skim_count++;
     }
   }
 
   // If any of the enabled skimming conditions are met, then increment the skim counter and return ABORTEVENT to skip the event
-  if ((m_EMC_skim_threshold > 0 && notinstr_EMC > m_EMC_skim_threshold) || (m_HCal_skim_threshold > 0 && (notinstr_HCalin > m_HCal_skim_threshold || notinstr_HCalout > m_HCal_skim_threshold)) || (m_sEPD_skim_threshold > 0 && notinstr_sEPD > m_sEPD_skim_threshold) || (m_ZDC_skim_threshold > 0 && notinstr_ZDC > m_ZDC_skim_threshold))
+  if ((m_EMC_skim_threshold > 0 && notinstr_EMC >= m_EMC_skim_threshold) || (m_HCal_skim_threshold > 0 && (notinstr_HCalin >= m_HCal_skim_threshold || notinstr_HCalout >= m_HCal_skim_threshold)) || (m_sEPD_skim_threshold > 0 && notinstr_sEPD >= m_sEPD_skim_threshold) || (m_ZDC_skim_threshold > 0 && notinstr_ZDC >= m_ZDC_skim_threshold))
   {
     n_skimcounter++;
     return Fun4AllReturnCodes::ABORTEVENT;

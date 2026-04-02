@@ -64,17 +64,18 @@ private:
   bool b_produce_QA_histograms{false};
 
   // If the threshold is set to 0, then the skimming for that subsystem is disabled. If threshold is > 0, then the event is skimmed if nchannels >= threshold not-instrumented (empty/missing packet) channels in that subsystem.
-  uint16_t m_EMC_skim_threshold{192}; 
-  // skim if nchannels > this many not-instrumented (empty/missing packet) channels in EMCal
+
+  uint16_t m_EMC_skim_threshold{193}; 
+  // skim if nchannels >= this many not-instrumented (empty/missing packet) channels in EMCal. For the EMCal in particular we want to skim if greater than 1 packet's worth of channels are not-instrumented, which corresponds to 193 channels (since each packet has 192 channels)
 
   uint16_t m_HCal_skim_threshold{192}; 
-  // skim if nchannels > this many not-instrumented (empty/missing packet) channels in HCal
+  // skim if nchannels >= this many not-instrumented (empty/missing packet) channels in HCal. Corresponds to 1 packet's worth of channels in HCal, which has 192 channels per packet
 
   uint16_t m_sEPD_skim_threshold{1}; 
-  // skim if nchannels > this many not-instrumented (empty/missing packet) channels in sEPD
+  // skim if nchannels >= this many not-instrumented (empty/missing packet) channels in sEPD. 
 
   uint16_t m_ZDC_skim_threshold{0}; 
-  // skim if nchannels > this many not-instrumented (empty/missing packet) channels in ZDC
+  // skim if nchannels > this many not-instrumented (empty/missing packet) channels in ZDC. Some issue in the ZDC right now so skimming is turned off by now by default.
 
   // Counters for number of events skimmed per subsystem
   uint32_t EMC_skim_count = 0;
