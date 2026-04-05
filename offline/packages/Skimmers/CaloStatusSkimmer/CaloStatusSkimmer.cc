@@ -12,24 +12,24 @@
 #include <calobase/TowerInfo.h>
 #include <calobase/TowerInfoContainer.h>
 
+#include <TH1.h>
+
 #include <cassert>
 #include <cstdint>
 #include <iostream>
-
-#include <TH1.h>
 
 //____________________________________________________________________________..
 CaloStatusSkimmer::CaloStatusSkimmer(const std::string &name)
     : SubsysReco(name)
 {
-  std::cout << "CaloStatusSkimmer::CaloStatusSkimmer(const std::string &name) ""Calling ctor" << std::endl;
+  //std::cout << "CaloStatusSkimmer::CaloStatusSkimmer(const std::string &name) ""Calling ctor" << std::endl;
 }
 
 
 //____________________________________________________________________________..
 int CaloStatusSkimmer::Init([[maybe_unused]] PHCompositeNode *topNode)
 {
-  std::cout << "CaloStatusSkimmer::Init(PHCompositeNode *topNode) This is Init..." << std::endl;
+  // std::cout << "CaloStatusSkimmer::Init(PHCompositeNode *topNode) This is Init..." << std::endl;
 
   if (b_produce_QA_histograms)
   {
