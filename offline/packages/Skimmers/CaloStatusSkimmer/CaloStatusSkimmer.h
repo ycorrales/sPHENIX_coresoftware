@@ -10,8 +10,6 @@
 #include <string>
 #include <utility>
 
-#include <TH1.h>
-
 class PHCompositeNode;
 class TH1;
 
