@@ -123,7 +123,7 @@ int SvtxEvaluator::Init(PHCompositeNode* /*topNode*/)
                              "gpx:gpy:gpz:"
                              "gvx:gvy:gvz:"
                              "gfpx:gfpy:gfpz:gfx:gfy:gfz:"
-                             "gembed:gisprimary:nclusters:"
+                             "gembed:gprimary:nclusters:"
                              "clusID:x:y:z:eta:phi:e:adc:layer:size:"
                              "efromtruth:dphitru:detatru:dztru:drtru:"
                              "nhittpcall:nhittpcin:nhittpcmid:nhittpcout:nclusall:nclustpc:nclusintt:nclusmaps:nclusmms");
@@ -138,7 +138,7 @@ int SvtxEvaluator::Init(PHCompositeNode* /*topNode*/)
                            "gtrackID:gflavor:"
                            "gpx:gpy:gpz:gvx:gvy:gvz:gvt:"
                            "gfpx:gfpy:gfpz:gfx:gfy:gfz:"
-                           "gembed:gisprimary:efromtruth:"
+                           "gembed:gprimary:efromtruth:"
                            "nhittpcall:nhittpcin:nhittpcmid:nhittpcout:nclusall:nclustpc:nclusintt:nclusmaps:nclusmms");
   }
 
@@ -152,14 +152,14 @@ int SvtxEvaluator::Init(PHCompositeNode* /*topNode*/)
                                "gy:gz:gr:gphi:geta:gt:gtrackID:gflavor:"
                                "gpx:gpy:gpz:gvx:gvy:gvz:gvt:"
                                "gfpx:gfpy:gfpz:gfx:gfy:gfz:"
-                               "gembed:gisprimary:efromtruth:nparticles:"
+                               "gembed:gprimary:efromtruth:nparticles:"
                                "nhittpcall:nhittpcin:nhittpcmid:nhittpcout:nclusall:nclustpc:nclusintt:nclusmaps:nclusmms");
   }
 
   if (_do_g4cluster_eval)
   {
     _ntp_g4cluster = new TNtuple("ntp_g4cluster", "g4cluster => max truth",
-                                 "event:layer:gx:gy:gz:gt:gedep:gr:gphi:geta:gtrackID:gflavor:gembed:gisprimary:gphisize:gzsize:gadc:nreco:x:y:z:r:phi:eta:ex:ey:ez:ephi:adc:phisize:zsize");
+                                 "event:layer:gx:gy:gz:gt:gedep:gr:gphi:geta:gtrackID:gflavor:gembed:gprimary:gphisize:gzsize:gadc:nreco:x:y:z:r:phi:eta:ex:ey:ez:ephi:adc:phisize:zsize");
   }
 
   if (_do_gtrack_eval)
@@ -172,7 +172,7 @@ int SvtxEvaluator::Init(PHCompositeNode* /*topNode*/)
                               "gpx:gpy:gpz:gpt:geta:gphi:"
                               "gvx:gvy:gvz:gvt:"
                               "gfpx:gfpy:gfpz:gfx:gfy:gfz:"
-                              "gembed:gisprimary:gparentflavor:gprimaryflavor:gprimaryid:"
+                              "gembed:gprimary:gparentflavor:gparentid:gprimaryflavor:gprimaryid:"
                               "trackID:px:py:pz:pt:eta:phi:deltapt:deltaeta:deltaphi:"
                               "siqr:siphi:sithe:six0:siy0:tpqr:tpphi:tpthe:tpx0:tpy0:"
                               "charge:quality:chisq:ndf:nhits:layers:nmaps:nintt:ntpc:nmms:ntpc1:ntpc11:ntpc2:ntpc3:nlmaps:nlintt:nltpc:nlmms:"
@@ -192,7 +192,7 @@ int SvtxEvaluator::Init(PHCompositeNode* /*topNode*/)
                              "gpx:gpy:gpz:gpt:geta:gphi:"
                              "gvx:gvy:gvz:gvt:"
                              "gfpx:gfpy:gfpz:gfx:gfy:gfz:"
-                             "gembed:gisprimary:gparentflavor:gprimaryflavor:gprimaryid:nfromtruth:nwrong:ntrumaps:nwrongmaps:ntruintt:nwrongintt:"
+                             "gembed:gprimary:gparentflavor:gparentid:gprimaryflavor:gprimaryid:nfromtruth:nwrong:ntrumaps:nwrongmaps:ntruintt:nwrongintt:"
                              "ntrutpc:nwrongtpc:ntrumms:nwrongmms:ntrutpc1:nwrongtpc1:ntrutpc11:nwrongtpc11:ntrutpc2:nwrongtpc2:ntrutpc3:nwrongtpc3:layersfromtruth:"
                              "npedge:nredge:nbig:novlp:merr:msize:"
                              "nhittpcall:nhittpcin:nhittpcmid:nhittpcout:nclusall:nclustpc:nclusintt:nclusmaps:nclusmms");
@@ -205,7 +205,7 @@ int SvtxEvaluator::Init(PHCompositeNode* /*topNode*/)
                              "glayer:"
                              "gpx:gpy:gpz:gtpt:gtphi:gteta:"
                              "gvx:gvy:gvz:"
-                             "gembed:gisprimary:gflav:"
+                             "gembed:gprimary:gflav:"
                              "dphiprev:detaprev:"
                              "nhittpcall:nhittpcin:nhittpcmid:nhittpcout:nclusall:nclustpc:nclusintt:nclusmaps:nclusmms");
   }
@@ -1455,7 +1455,7 @@ void SvtxEvaluator::fillOutputNtuples(PHCompositeNode* topNode)
       float gvz = std::numeric_limits<float>::quiet_NaN();
 
       float gembed = std::numeric_limits<float>::quiet_NaN();
-      float gisprimary = std::numeric_limits<float>::quiet_NaN();
+      float gprimary = std::numeric_limits<float>::quiet_NaN();
 
       float gfpx = 0.;
       float gfpy = 0.;
@@ -1504,7 +1504,7 @@ void SvtxEvaluator::fillOutputNtuples(PHCompositeNode* topNode)
         }
 
         gembed = trutheval->get_embed(g4particle);
-        gisprimary = trutheval->is_primary(g4particle);
+        gprimary = trutheval->is_primary(g4particle);
       }  //       if (g4particle)
 
       std::set<TrkrDefs::cluskey> clusters = clustereval->all_clusters_from(g4hit);
@@ -1603,7 +1603,7 @@ void SvtxEvaluator::fillOutputNtuples(PHCompositeNode* topNode)
                             gfy,
                             gfz,
                             gembed,
-                            gisprimary,
+                            gprimary,
                             nclusters,
                             clusID,
                             x,
@@ -1727,7 +1727,7 @@ void SvtxEvaluator::fillOutputNtuples(PHCompositeNode* topNode)
           float gfy = std::numeric_limits<float>::quiet_NaN();
           float gfz = std::numeric_limits<float>::quiet_NaN();
           float gembed = std::numeric_limits<float>::quiet_NaN();
-          float gisprimary = std::numeric_limits<float>::quiet_NaN();
+          float gprimary = std::numeric_limits<float>::quiet_NaN();
 
           float efromtruth = std::numeric_limits<float>::quiet_NaN();
 
@@ -1781,7 +1781,7 @@ void SvtxEvaluator::fillOutputNtuples(PHCompositeNode* topNode)
                 gfz = outerhit->get_z(1);
               }
               gembed = trutheval->get_embed(g4particle);
-              gisprimary = trutheval->is_primary(g4particle);
+              gprimary = trutheval->is_primary(g4particle);
             }  //   if (g4particle){
           }
 
@@ -1829,7 +1829,7 @@ void SvtxEvaluator::fillOutputNtuples(PHCompositeNode* topNode)
               gfy,
               gfz,
               gembed,
-              gisprimary,
+              gprimary,
               efromtruth,
               nhit_tpc_all,
               nhit_tpc_in,
@@ -2030,7 +2030,7 @@ void SvtxEvaluator::fillOutputNtuples(PHCompositeNode* topNode)
           float gfy = std::numeric_limits<float>::quiet_NaN();
           float gfz = std::numeric_limits<float>::quiet_NaN();
           float gembed = std::numeric_limits<float>::quiet_NaN();
-          float gisprimary = std::numeric_limits<float>::quiet_NaN();
+          float gprimary = std::numeric_limits<float>::quiet_NaN();
 
           float efromtruth = std::numeric_limits<float>::quiet_NaN();
 
@@ -2094,7 +2094,7 @@ void SvtxEvaluator::fillOutputNtuples(PHCompositeNode* topNode)
               }
 
               gembed = trutheval->get_embed(g4particle);
-              gisprimary = trutheval->is_primary(g4particle);
+              gprimary = trutheval->is_primary(g4particle);
             }  //   if (g4particle){
 
             if (Verbosity() > 1)
@@ -2162,7 +2162,7 @@ void SvtxEvaluator::fillOutputNtuples(PHCompositeNode* topNode)
                                   gfy,
                                   gfz,
                                   gembed,
-                                  gisprimary,
+                                  gprimary,
                                   efromtruth,
                                   nparticles,
                                   nhit_tpc_all,
@@ -2343,7 +2343,7 @@ void SvtxEvaluator::fillOutputNtuples(PHCompositeNode* topNode)
           float gfy = std::numeric_limits<float>::quiet_NaN();
           float gfz = std::numeric_limits<float>::quiet_NaN();
           float gembed = std::numeric_limits<float>::quiet_NaN();
-          float gisprimary = std::numeric_limits<float>::quiet_NaN();
+          float gprimary = std::numeric_limits<float>::quiet_NaN();
 
           float efromtruth = std::numeric_limits<float>::quiet_NaN();
 
@@ -2399,7 +2399,7 @@ void SvtxEvaluator::fillOutputNtuples(PHCompositeNode* topNode)
               }
 
               gembed = trutheval->get_embed(g4particle);
-              gisprimary = trutheval->is_primary(g4particle);
+              gprimary = trutheval->is_primary(g4particle);
             }  //   if (g4particle){
           }  //  if (g4hit) {
 
@@ -2459,7 +2459,7 @@ void SvtxEvaluator::fillOutputNtuples(PHCompositeNode* topNode)
                                   gfy,
                                   gfz,
                                   gembed,
-                                  gisprimary,
+                                  gprimary,
                                   efromtruth,
                                   nparticles,
                                   nhit_tpc_all,
@@ -2513,11 +2513,11 @@ void SvtxEvaluator::fillOutputNtuples(PHCompositeNode* topNode)
       float gtrackID = g4particle->get_track_id();
       float gflavor = g4particle->get_pid();
       float gembed = trutheval->get_embed(g4particle);
-      float gisprimary = trutheval->is_primary(g4particle);
+      float gprimary = trutheval->is_primary(g4particle);
 
       if (Verbosity() > 1)
       {
-        std::cout << PHWHERE << " PHG4Particle ID " << gtrackID << " gflavor " << gflavor << " gisprimary " << gisprimary << std::endl;
+        std::cout << PHWHERE << " PHG4Particle ID " << gtrackID << " gflavor " << gflavor << " gprimary " << gprimary << std::endl;
       }
 
       // Get the truth clusters from this particle
@@ -2620,7 +2620,7 @@ void SvtxEvaluator::fillOutputNtuples(PHCompositeNode* topNode)
                                   gtrackID,
                                   gflavor,
                                   gembed,
-                                  gisprimary,
+                                  gprimary,
                                   gphisize,
                                   gzsize,
                                   gadc,
@@ -2879,8 +2879,10 @@ void SvtxEvaluator::fillOutputNtuples(PHCompositeNode* topNode)
         }
 
         float gembed = trutheval->get_embed(g4particle);
-        float gisprimary = trutheval->is_primary(g4particle);
-        float gparentflavor = trutheval->get_parent_particle_flavor(g4particle);
+        float gprimary = trutheval->is_primary(g4particle);
+	float gparentflavor = trutheval->get_parent_particle_flavor(g4particle);
+        PHG4Particle* parent = trutheval->get_parent_particle(g4particle);
+	float gparentid = parent->get_track_id();
 	float gprimaryflavor = trutheval->get_primary_particle_flavor(g4particle);
 	PHG4Particle* g4primary = trutheval->get_primary_particle(g4particle);
 	float gprimaryid = g4primary->get_track_id();
@@ -3327,8 +3329,9 @@ void SvtxEvaluator::fillOutputNtuples(PHCompositeNode* topNode)
                                gfy,
                                gfz,
                                gembed,
-                               gisprimary,
+                               gprimary,
 			       gparentflavor,
+			       gparentid,
 			       gprimaryflavor,
 			       gprimaryid,
                                trackID,
@@ -3767,9 +3770,9 @@ void SvtxEvaluator::fillOutputNtuples(PHCompositeNode* topNode)
         float gtrackID = std::numeric_limits<float>::quiet_NaN();
         float gflavor = std::numeric_limits<float>::quiet_NaN();
 	float gparentflavor = std::numeric_limits<float>::quiet_NaN();
+	float gparentid = std::numeric_limits<float>::quiet_NaN();
 	float gprimaryflavor = std::numeric_limits<float>::quiet_NaN();
-        float gprimaryid = std::numeric_limits<float>::quiet_NaN();			
-
+	float gprimaryid = std::numeric_limits<float>::quiet_NaN();			
 
 	float ng4hits = std::numeric_limits<float>::quiet_NaN();
         unsigned int ngmaps = 0;
@@ -3797,7 +3800,7 @@ void SvtxEvaluator::fillOutputNtuples(PHCompositeNode* topNode)
         float gfy = std::numeric_limits<float>::quiet_NaN();
         float gfz = std::numeric_limits<float>::quiet_NaN();
         float gembed = std::numeric_limits<float>::quiet_NaN();
-        float gisprimary = std::numeric_limits<float>::quiet_NaN();
+        float gprimary = std::numeric_limits<float>::quiet_NaN();
 
         int ispure = 0;
         float nfromtruth = std::numeric_limits<float>::quiet_NaN();
@@ -3844,6 +3847,8 @@ void SvtxEvaluator::fillOutputNtuples(PHCompositeNode* topNode)
             gflavor = g4particle->get_pid();
 
 	    gparentflavor = (float) trutheval->get_parent_particle_flavor(g4particle);
+	    PHG4Particle* parent = trutheval->get_parent_particle(g4particle);
+	    gparentid = (float) parent->get_track_id();
 	    gprimaryflavor = (float) trutheval->get_primary_particle_flavor(g4particle);
 	    PHG4Particle* g4primary = trutheval->get_primary_particle(g4particle);
 	    gprimaryid = (float) g4primary->get_track_id();
@@ -3941,7 +3946,7 @@ void SvtxEvaluator::fillOutputNtuples(PHCompositeNode* topNode)
               gfz = outerhit->get_z(1);
             }
             gembed = trutheval->get_embed(g4particle);
-            gisprimary = trutheval->is_primary(g4particle);
+            gprimary = trutheval->is_primary(g4particle);
 
             nfromtruth = trackeval->get_nclusters_contribution(track, g4particle);
             nwrong = trackeval->get_nwrongclusters_contribution(track, g4particle);
@@ -4073,8 +4078,9 @@ void SvtxEvaluator::fillOutputNtuples(PHCompositeNode* topNode)
                               gfy,
                               gfz,
 			      gembed,
-                              gisprimary,
+                              gprimary,
 			      gparentflavor,
+			      gparentid,
 			      gprimaryflavor,
 			      gprimaryid,
                               nfromtruth,
@@ -4116,7 +4122,7 @@ void SvtxEvaluator::fillOutputNtuples(PHCompositeNode* topNode)
                     << " py " << py
                     << " pz " << pz
                     << " gembed " << gembed
-                    << " gisprimary " << gisprimary
+                    << " gprimary " << gprimary
                     << std::endl;
         }
 
@@ -4161,7 +4167,7 @@ void SvtxEvaluator::fillOutputNtuples(PHCompositeNode* topNode)
     float gvy = std::numeric_limits<float>::quiet_NaN();
     float gvz = std::numeric_limits<float>::quiet_NaN();
     float gembed = std::numeric_limits<float>::quiet_NaN();
-    float gisprimary = std::numeric_limits<float>::quiet_NaN();
+    float gprimary = std::numeric_limits<float>::quiet_NaN();
     float gflav = std::numeric_limits<float>::quiet_NaN();
     float dphiprev = std::numeric_limits<float>::quiet_NaN();
     float detaprev = std::numeric_limits<float>::quiet_NaN();
@@ -4234,7 +4240,7 @@ void SvtxEvaluator::fillOutputNtuples(PHCompositeNode* topNode)
           }
 
           gembed = trutheval->get_embed(g4particle);
-          gisprimary = trutheval->is_primary(g4particle);
+          gprimary = trutheval->is_primary(g4particle);
           gflav = g4particle->get_pid();
           if (i >= 1)
           {
@@ -4267,7 +4273,7 @@ void SvtxEvaluator::fillOutputNtuples(PHCompositeNode* topNode)
                                 gvy,
                                 gvz,
                                 gembed,
-                                gisprimary,
+                                gprimary,
                                 gflav,
                                 dphiprev,
                                 detaprev,

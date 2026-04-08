@@ -1082,6 +1082,12 @@ bool SvtxTruthEval::is_primary(PHG4Particle* particle)
   return _basetrutheval.is_primary(particle);
 }
 
+PHG4Particle* SvtxTruthEval::get_parent_particle(PHG4Particle* particle)
+{
+  PHG4Particle* parent = _basetrutheval.get_parent_particle(particle);  
+  return parent;
+}
+
 int SvtxTruthEval::get_parent_particle_flavor(PHG4Particle* particle)
 {
   PHG4Particle* parent = _basetrutheval.get_parent_particle(particle);
