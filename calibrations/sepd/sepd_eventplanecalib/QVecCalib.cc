@@ -222,10 +222,13 @@ void QVecCalib::init_hists()
     m_hists2D[name_N] = new TH2F(name_N.c_str(), title_N.c_str(), m_cent_bins, m_cent_low, m_cent_high, bins_psi, psi_low, psi_high);
     m_hists2D[name_NS] = new TH2F(name_NS.c_str(), title_NS.c_str(), m_cent_bins, m_cent_low, m_cent_high, bins_psi, psi_low, psi_high);
 
-    std::string name_EP_res = std::format("hEP_res_{}", n);
-    std::string title_EP_res = std::format("; Centrality [%]; #LTRe(Q^{{S}}_{{{0}}} Q^{{N*}}_{{{0}}}) / (|Q^{{S}}_{{{0}}}||Q^{{N}}_{{{0}}}|)#GT", n);
+    if (m_pass == Pass::ApplyFlattening)
+    {
+      std::string name_EP_res = std::format("hEP_res_{}", n);
+      std::string title_EP_res = std::format("; Centrality [%]; #LTRe(Q^{{S}}_{{{0}}} Q^{{N*}}_{{{0}}}) / (|Q^{{S}}_{{{0}}}||Q^{{N}}_{{{0}}}|)#GT", n);
 
-    m_profiles[name_EP_res] = new TProfile(name_EP_res.c_str(), title_EP_res.c_str(), m_cent_bins, m_cent_low, m_cent_high);
+      m_profiles[name_EP_res] = new TProfile(name_EP_res.c_str(), title_EP_res.c_str(), m_cent_bins, m_cent_low, m_cent_high);
+    }
 
     // South, North
     for (auto det : m_subdetectors)

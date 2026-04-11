@@ -5,6 +5,7 @@
 
 #include <fun4all/SubsysReco.h>
 
+#include <algorithm>
 #include <array>
 #include <map>
 #include <stdexcept>
