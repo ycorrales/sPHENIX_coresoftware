@@ -367,7 +367,7 @@ int EventPlaneReco::process_sEPD(PHCompositeNode* topNode)
     }
 
     // Clamp on high charge threshold
-    if (m_sEPD_charge_threshold && charge > m_sEPD_charge_threshold)
+    if (m_sEPD_charge_threshold > 0 && charge > m_sEPD_charge_threshold)
     {
       charge = m_sEPD_charge_threshold;
     }

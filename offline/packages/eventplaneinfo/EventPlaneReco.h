@@ -67,7 +67,7 @@ class EventPlaneReco : public SubsysReco
 
   void set_charge_threshold(double threshold)
   {
-    m_sEPD_charge_threshold = threshold;
+    m_sEPD_charge_threshold = std::max(0.0, threshold);
   }
 
   void set_skipRing0(bool skip)
